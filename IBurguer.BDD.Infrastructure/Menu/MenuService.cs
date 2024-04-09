@@ -1,34 +1,43 @@
 ﻿using IBurguer.BDD.Model.Menu;
-using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace IBurguer.BDD.Infrastructure.Menu
 {
     public class MenuService : IMenuService
     {
         private readonly HttpClient _client;
+        private readonly MenuServiceConfiguration _config;
 
         private readonly string _path = "/items";
 
-        public MenuService(HttpClient client)
+        public MenuService(HttpClient client, IOptions<MenuServiceConfiguration> options)
         {
             _client = client;
+            _config = options.Value;
+
+            _client.BaseAddress = new Uri(_config.BaseUrl);
         }
 
         public async Task Authenticate()
         {
-            throw new NotImplementedException();
+            if(_config.NeedsAuthentication)
+            {
+
+            }
         }
 
         public async Task<AddMenuItemResponse> AddItem(AddMenuItemRequest request)
         {
-            var content = new StringContent(JsonSerializer.Serialize(request));
+            var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync($"{_path}", content);
             response.EnsureSuccessStatusCode();
 
             var strContent = await response.Content.ReadAsStringAsync();
 
-            var result = JsonSerializer.Deserialize<AddMenuItemResponse>(strContent);
+            var result = JsonConvert.DeserializeObject<AddMenuItemResponse>(strContent);
 
             return result;
         }
@@ -40,7 +49,7 @@ namespace IBurguer.BDD.Infrastructure.Menu
 
             var strContent = await response.Content.ReadAsStringAsync();
 
-            var result = JsonSerializer.Deserialize<IEnumerable<MenuItemResponse>>(strContent);
+            var result = JsonConvert.DeserializeObject<IEnumerable<MenuItemResponse>>(strContent);
 
             return result;
         }
