@@ -26,6 +26,7 @@
   <ItemGroup>
     <Folder Include="Drivers\" />
     <Folder Include="Features\Menu\" />
+    <Folder Include="Features\ShoppingCart\" />
     <Folder Include="Support\" />
   </ItemGroup>
 
