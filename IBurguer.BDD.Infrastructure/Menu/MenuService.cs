@@ -10,7 +10,7 @@ namespace IBurguer.BDD.Infrastructure.Menu
         private readonly HttpClient _client;
         private readonly MenuServiceConfiguration _config;
 
-        private readonly string _path = "/items";
+        private readonly string _path = "iburguer-admin/api/menu/items";
 
         public MenuService(HttpClient client, IOptions<MenuServiceConfiguration> options)
         {

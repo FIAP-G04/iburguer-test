@@ -54,7 +54,7 @@ namespace IBurguer.BDD.StepDefinitions.Menu
         {
             var result = await _menuService.GetItems(category);
 
-            var addedItem = result.FirstOrDefault(x => x.ItemId == _addedItemId);
+            var addedItem = result.FirstOrDefault(x => x.Id == _addedItemId);
             addedItem.Should().NotBeNull();
 
             addedItem!.Category.Should().Be(category);
