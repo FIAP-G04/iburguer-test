@@ -20,6 +20,13 @@ namespace IBurguer.BDD.StepDefinitions.ShoppingCart
             _customerId = Guid.NewGuid();
         }
 
+        [Given(@"that i'm authenticated at shopping cart service")]
+        public async Task GivenThatImAuthenticatedAtShoppingCartService()
+        {
+            await _shoppingCartService.Authenticate();
+        }
+
+
         [When(@"i create a shopping cart")]
         public async Task WhenICreateAShoppingCart()
         {
