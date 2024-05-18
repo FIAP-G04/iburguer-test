@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using SolidToken.SpecFlow.DependencyInjection;
 using IBurguer.BDD.Infrastructure.Menu;
 using IBurguer.BDD.Infrastructure.ShoppingCart;
+using IBurguer.BDD.Infrastructure.Orders;
+using IBurguer.BDD.Infrastructure.Payments;
 
 namespace IBurguer.BDD
 {
@@ -21,9 +23,13 @@ namespace IBurguer.BDD
 
             services.Configure<MenuServiceConfiguration>(Configuration.GetSection("MenuService"));
             services.Configure<ShoppingCartConfiguration>(Configuration.GetSection("ShoppingCartService"));
+            services.Configure<OrdersServiceConfiguration>(Configuration.GetSection("OrderService"));
+            services.Configure<PaymentsServiceConiguration>(Configuration.GetSection("PaymentsService"));
 
             services.AddHttpClient<IMenuService, MenuService>();
             services.AddHttpClient<IShoppingCartService, ShoppingCartService>();
+            services.AddHttpClient<IOrdersService, OrdersService>();
+            services.AddHttpClient<IPaymentsService, PaymentsService>();
 
             return services;
         }
