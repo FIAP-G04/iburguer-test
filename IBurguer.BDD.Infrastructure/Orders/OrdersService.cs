@@ -52,5 +52,12 @@ namespace IBurguer.BDD.Infrastructure.Orders
 
             return result;
         }
+
+        public async Task StartOrder(Guid orderId)
+        {
+            var response = await _httpClient.PatchAsync($"{_basePath}/{orderId}/started", new StringContent(""));
+
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

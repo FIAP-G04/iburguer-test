@@ -2,29 +2,28 @@
 using IBurguer.BDD.Infrastructure.Payments;
 using IBurguer.BDD.Model.Orders;
 
-namespace IBurguer.BDD.StepDefinitions.Payments
+namespace IBurguer.BDD.StepDefinitions.Ordering
 {
     [Binding]
-    public class PaymentsSteps
+    public class OrderingSteps
     {
         private readonly IPaymentsService _paymentsService;
         private readonly IOrdersService _ordersService;
 
         private Guid _orderId;
-        private Guid _paymentId;
 
         private decimal _price = 10;
         private ushort _quantity = 1;
         private decimal _amount => _price * _quantity;
 
-        public PaymentsSteps(IPaymentsService paymentsService, IOrdersService ordersService)
+        public OrderingSteps(IPaymentsService paymentsService, IOrdersService ordersService)
         {
             _paymentsService = paymentsService;
             _ordersService = ordersService;
         }
 
-        [Given(@"That I have an order waiting for payment")]
-        public async Task GivenThatIHaveAnOrderWaitingForPayment()
+        [Given(@"That I have a paid order")]
+        public async Task GivenThatIHaveAPaidOrder()
         {
             var request = new GenerateOrderRequest()
             {
@@ -47,23 +46,19 @@ namespace IBurguer.BDD.StepDefinitions.Payments
             var result = await _ordersService.GenerateOrder(request);
 
             _orderId = result.OrderId;
+
+            var paymentResult = await _paymentsService.GenerateQRCode(_orderId, _amount);
+            var paymentId = paymentResult.PaymentId;
+            await _paymentsService.ConfirmPayment(paymentId);
         }
 
-        [Given(@"That I generated a QR Code")]
-        public async Task GivenThatIGeneratedAQRCode()
+        [When(@"The the order is started")]
+        public async Task WhenTheTheOrderIsStarted()
         {
-            var result = await _paymentsService.GenerateQRCode(_orderId, _amount);
-
-            _paymentId = result.PaymentId;
+            await _ordersService.StartOrder(_orderId);
         }
 
-        [When(@"The payment is confirmed")]
-        public async Task WhenThePaymentIsConfirmed()
-        {
-            await _paymentsService.ConfirmPayment(_paymentId);
-        }
-
-        [Then(@"The order should be at Confirmed status")]
+        [Then(@"The order should be at InProgress status")]
         public async Task ThenTheOrderShouldBeAtConfirmedStatus()
         {
             var orders = await _ordersService.GetOrders();
@@ -72,8 +67,7 @@ namespace IBurguer.BDD.StepDefinitions.Payments
 
             order.Should().NotBeNull();
 
-            order.OrderStatus.Should().Be("Confirmed");
+            order.OrderStatus.Should().Be("InProgress");
         }
-
     }
 }
