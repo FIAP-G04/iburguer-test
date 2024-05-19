@@ -7,6 +7,8 @@ namespace IBurguer.BDD.Infrastructure.Orders
         Task Authenticate();
         Task<GeneratedOrderResponse> GenerateOrder(GenerateOrderRequest request);
 
+        Task StartOrder(Guid orderId);
+
         Task<PaginatedList<OrderSummaryResponse>> GetOrders();
     }
 }
